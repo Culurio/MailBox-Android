@@ -1,12 +1,20 @@
 package com.clurio.scmu.mailbox.data
 
-data class DeviceStatus(
-    val led: Led? = null,
-    val locked: Boolean = false,
-    val packages: Int = 0
+
+data class MailboxStatus(
+    val lastPackageNumber: Int = 0,
+    val led: LedStatus = LedStatus(),
+    val closed: Boolean = false,
+    val packages: Map<String, PackageData> = emptyMap()
 )
 
-data class Led(
-    val state: Int = 0
+data class LedStatus(
+    val locked: Boolean = false
+)
+
+data class PackageData(
+    val arrival_time: String = "",
+    val packagePresent: Boolean = false,
+    val pickup_time: String = ""
 )
 

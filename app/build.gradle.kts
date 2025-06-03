@@ -53,6 +53,11 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation (libs.firebase.auth)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation (libs.androidx.navigation.compose)
+
 
 
 
