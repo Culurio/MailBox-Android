@@ -12,6 +12,8 @@ import com.google.firebase.database.MutableData
 import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class MailBoxViewModel : ViewModel() {
 
@@ -49,6 +51,48 @@ class MailBoxViewModel : ViewModel() {
                 Log.e("Firebase", "Failed to listen for mailbox status", error.toException())
             }
         })
+    }
+
+    fun markPackagePickedUp(packageId: String) {
+        val currentStatus = status.value
+        val updatedPackages = currentStatus.packages.toMutableMap()
+        val now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))
+
+        val pkg = updatedPackages[packageId]
+        if (pkg != null && pkg.packagePresent && pkg.pickup_time.isBlank()) {
+            updatedPackages[packageId] = pkg.copy(
+                pickup_time = now,
+                packagePresent = false
+            )
+            status.value = currentStatus.copy(packages = updatedPackages)
+
+            database
+                .getReference("lastPackageNumber")
+                .setValue(status.value.lastPackageNumber-1)
+
+            database
+                .getReference("packages")
+                .child(packageId)
+                .child("pickup_time")
+                .setValue(now)
+
+            database
+                .getReference("packages")
+                .child(packageId)
+                .child("packagePresent")
+                .setValue(false)
+        }
+    }
+
+    fun turnBuzzer() {
+        val buzzerStatus = status.value.buzzer
+        var nextState = false
+        if(!buzzerStatus){
+            nextState = true
+        }
+        database
+            .getReference("buzzer")
+            .setValue(nextState)
     }
 
     fun toggleLocked() {

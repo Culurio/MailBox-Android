@@ -3,6 +3,7 @@ package com.clurio.scmu.mailbox.data
 
 data class MailboxStatus(
     val lastPackageNumber: Int = 0,
+    val buzzer: Boolean = false,
     val led: LedStatus = LedStatus(),
     val closed: Boolean = false,
     val packages: Map<String, PackageData> = emptyMap()
