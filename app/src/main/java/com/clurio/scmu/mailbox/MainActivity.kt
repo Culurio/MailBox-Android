@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,18 +20,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.clurio.scmu.mailbox.data.MailboxStatus
 import com.clurio.scmu.mailbox.notifications.FirebasePackageListener
 import com.clurio.scmu.mailbox.notifications.NotificationHandler
 import com.clurio.scmu.mailbox.notifications.PackageCheckScheduler
+import com.clurio.scmu.mailbox.ui.ToggleButton
 import com.clurio.scmu.mailbox.ui.icons.getLockIcon
 import com.clurio.scmu.mailbox.ui.icons.getUnlockIcon
 import com.clurio.scmu.mailbox.ui.theme.MailBoxTheme
@@ -90,15 +96,8 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text("Status")
-            }
-
             Image(
                 modifier = Modifier
                     .size(256.dp)
@@ -107,21 +106,34 @@ class MainActivity : ComponentActivity() {
                 contentDescription = null,
             )
 
-            Button(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                onClick = { viewModel.toggleLocked() }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
-                Text("Lock")
+                Text("Status")
             }
+            Text(
+                text = "You have ${status.lastPackageNumber} packages",
+                style = TextStyle(textAlign = TextAlign.Center),
+                modifier = Modifier.fillMaxWidth()
+            )
 
-            Button(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                onClick = { /* TODO: Buzzer */ }
-            ) {
-                Text("Turn On the Buzzer")
-            }
+            ToggleButton(
+                isActive = viewModel.status.value.led.locked,
+                onToggle = { viewModel.toggleLocked() },
+                textOn = "Unlock",
+                textOff = "Lock",
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
 
-            DeviceScreen(status)
+            ToggleButton(
+                isActive = viewModel.status.value.buzzer,
+                onToggle = { viewModel.turnBuzzer() },
+                textOn = "Turn Off the Buzzer",
+                textOff = "Turn On the Buzzer",
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+
         }
     }
 
@@ -200,11 +212,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         )
-    }
-
-    @Composable
-    fun DeviceScreen(status: MailboxStatus) {
-        Text("LED: ${status.led.locked}")
-        Text("Packages: ${status.lastPackageNumber}")
     }
 }

@@ -14,6 +14,6 @@ fun formatDateForUser(dateStr: String?): String {
         dateTime.format(outputFormatter)
     } catch (e: Exception) {
         e.printStackTrace()
-        "Invalid date"
+        "Not picked up yet"
     }
 }
