@@ -95,9 +95,9 @@ fun PackageCard(pkg: PackageData, onPickup: () -> Unit) {
                     textOn = "Picked Up",
                     textOff = "Mark as Picked Up",
                     modifier = Modifier
-                        .align(Alignment.End)
                         .height(48.dp)
                         .width(180.dp)
+                        .align(Alignment.CenterHorizontally)
                 )
             }
         }
